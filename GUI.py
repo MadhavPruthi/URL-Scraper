@@ -1,5 +1,8 @@
 import tkinter as tk
+import threading
+
 import Crawl
+
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -8,7 +11,6 @@ class Application(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-
         self.insert = tk.Entry(self)
         self.insert.pack(side="top")
         self.insert.focus_set()
@@ -18,15 +20,19 @@ class Application(tk.Frame):
         self.hi_there["command"] = self.say_hi
         self.hi_there.pack(side="top")
 
-        self.quit = tk.Button(self, text="QUIT", fg="red",
-                              command=root.destroy)
+        self.quit = tk.Button(
+            self, text="QUIT", fg="red", command=root.destroy
+        )
+
         self.quit.pack(side="bottom")
 
     def say_hi(self):
-        #pass
         print("Executed")
-        while 1:
-            Crawl.Main(self.insert.get())
+        process = threading.Thread(
+            target=Crawl.Main, args=(self.insert.get(),)
+        )
+        process.setDaemon(True)
+        process.start()
 
 
 root = tk.Tk()
